@@ -374,18 +374,12 @@ sistema-petcare/
 │   │   ├── VeterinarioDAO.java      # CRUD Veterinário
 │   │   └── ConsultaDAO.java         # CRUD Consulta
 │   │
-│   └── SistemaPetCare.java          # Classe principal (Main)
+│   └── ClinicaVeterinaria.java      # Classe principal (Main)
 │
-├── database/
-│   ├── ddl_modelo.sql               # Script de criação do banco
-│   └── dml_dados_teste.sql          # Dados de exemplo (opcional)
 │
 ├── lib/
 │   └── postgresql-42.7.8.jar        # Driver JDBC PostgreSQL
 │
-├── docs/
-│   ├── DER.png                      # Diagrama Entidade-Relacionamento
-│   └── apresentacao.md              # Guia de apresentação
 │
 └── README.md                        # Este arquivo
 ```
