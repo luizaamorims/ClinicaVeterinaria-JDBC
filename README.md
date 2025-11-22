@@ -28,7 +28,7 @@
 
 ## 🎯 Sobre o Projeto
 
-O **Sistema PetCare** é uma aplicação desenvolvida para gerenciar as operações de uma clínica veterinária, permitindo o cadastro e controle de:
+O **Sistema** é uma aplicação desenvolvida para gerenciar as operações de uma clínica veterinária, permitindo o cadastro e controle de:
 
 - 👤 Proprietários de animais
 - 🐕 Animais (pets)
