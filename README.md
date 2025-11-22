@@ -22,7 +22,6 @@
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Demonstração](#demonstração)
 - [Boas Práticas Implementadas](#boas-práticas-implementadas)
-- [Autor](#autor)
 
 ---
 
