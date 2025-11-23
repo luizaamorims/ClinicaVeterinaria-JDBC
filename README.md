@@ -1,4 +1,4 @@
-# 🐾 Sistema de Gestão para Clínica Veterinária 
+# 🐾 Sistema de Gestão para Clínica Veterinária
 
 > Sistema completo de gerenciamento de clínica veterinária desenvolvido em Java com JDBC e PostgreSQL
 
@@ -27,7 +27,7 @@
 
 ## 🎯 Sobre o Projeto
 
-O **Sistema** é uma aplicação desenvolvida para gerenciar as operações de uma clínica veterinária, permitindo o cadastro e controle de:
+O **Sistema de Clínica Veterinária** é uma aplicação desenvolvida para gerenciar as operações de uma clínica veterinária, permitindo o cadastro e controle de:
 
 - 👤 Proprietários de animais
 - 🐕 Animais (pets)
@@ -38,32 +38,45 @@ O sistema foi desenvolvido como projeto acadêmico da disciplina de **Banco de D
 - Implementação de CRUD completo
 - Uso de JDBC puro (sem frameworks)
 - Boas práticas de desenvolvimento
-- Normalização de banco de dados
+- Normalização de banco de dados (3FN)
+- Validações e integridade referencial
 
 ---
 
 ## ✨ Funcionalidades
 
 ### 📝 Cadastros (CREATE)
-- ✅ Cadastrar proprietários
-- ✅ Cadastrar animais
-- ✅ Cadastrar veterinários
-- ✅ Cadastrar consultas
+- ✅ Cadastrar proprietários com validação de CPF
+- ✅ Cadastrar animais vinculados a proprietários
+- ✅ Cadastrar veterinários com CRMV único
+- ✅ Cadastrar consultas com validação de relacionamentos
 
 ### 📊 Consultas (READ)
 - ✅ Listar todos os proprietários
 - ✅ Listar animais por proprietário
 - ✅ Listar todos os veterinários
-- ✅ Gerar relatório completo de consulta (com JOIN)
+- ✅ Gerar relatório completo de consulta com JOIN de 4 tabelas
 
 ### ✏️ Atualizações (UPDATE)
 - ✅ Atualizar dados de proprietários
 - ✅ Atualizar dados de veterinários
+- ✅ Atualizar informações de animais
+- ✅ Atualizar diagnóstico e valor de consultas
 
 ### 🗑️ Exclusões (DELETE)
-- ✅ Deletar animais
+- ✅ Deletar animais com confirmação
 - ✅ Deletar veterinários
+- ✅ Deletar proprietários (CASCADE para animais)
+- ✅ Deletar consultas
 - ✅ Integridade referencial (CASCADE e RESTRICT)
+
+### 🛡️ Validações Implementadas
+- ✅ CPF com 11 dígitos numéricos
+- ✅ Verificação de duplicidade (CPF, CRMV)
+- ✅ Validação de datas e valores
+- ✅ Verificação de FK antes de inserir
+- ✅ Confirmação antes de deletar
+- ✅ Tratamento de erros específicos
 
 ---
 
@@ -90,27 +103,29 @@ O sistema segue o padrão **DAO (Data Access Object)** com separação de respon
 
 ```
 ┌─────────────────────────────────────────┐
-│           CAMADA DE APRESENTAÇÃO        │
-│         ClinicaVeterinaria.java             │  ← Interface do usuário (Console)
+│      CAMADA DE APRESENTAÇÃO             │
+│      ClinicaVeterinaria.java            │  ← Interface do usuário (Console)
 └─────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────┐
-│           CAMADA DE MODELO              │
-│   Proprietario.java, Animal.java, etc. │  ← Classes que representam entidades
+│         CAMADA DE MODELO (Models)       │
+│   Proprietario, Animal, Veterinario,    │  ← Classes que representam entidades
+│   Consulta                              │
 └─────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────┐
-│           CAMADA DE PERSISTÊNCIA        │
-│  ProprietarioDAO, AnimalDAO, etc.       │  ← Acesso ao banco de dados
+│    CAMADA DE PERSISTÊNCIA (DAO)         │
+│  ProprietarioDAO, AnimalDAO,            │  ← Acesso ao banco de dados
+│  VeterinarioDAO, ConsultaDAO            │
 └─────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────┐
-│         GERENCIAMENTO DE CONEXÃO        │
-│         FabricaConexao.java          │  ← Criação de conexões
+│   GERENCIAMENTO DE CONEXÃO (Config)     │
+│      FabricaConexao.java            │  ← Criação de conexões
 └─────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────┐
-│         BANCO DE DADOS PostgreSQL       │
+│      BANCO DE DADOS PostgreSQL          │
 └─────────────────────────────────────────┘
 ```
 
@@ -204,30 +219,28 @@ cd sistema-petcare
 
 ### 2. Configure o Banco de Dados
 
-Execute o script SQL para criar o banco e as tabelas:
+#### Opção A - Execução rápida com scripts separados (RECOMENDADO)
 
 ```bash
-psql -U postgres -f ddl_modelo.sql
+# 1. Criar banco
+psql -U postgres -f database/01-criar-banco.sql
+
+# 2. Criar tabelas
+psql -U postgres -d clinicaveterinaria -f database/02-criar-tabelas.sql
+
+# 3. Inserir dados de teste (opcional)
+psql -U postgres -d clinicaveterinaria -f database/03-dados-teste.sql
 ```
 
-**Ou** execute manualmente no pgAdmin/DBeaver:
+#### Opção B - Execução manual no pgAdmin
 
-```sql
-CREATE DATABASE clinicaveterinaria;
-\c clinicaveterinaria;
+1. Abrir pgAdmin
+2. Botão direito em "Databases" → "Query Tool"
+3. Executar os scripts na ordem (01, 02, 03)
 
--- Criar as tabelas (ver arquivo ddl_modelo.sql)
-```
+### 3. Configure a ConnectionFactory
 
-### 3. (Opcional) Insira dados de teste
-
-```bash
-psql -U postgres -d clinicaveterinaria -f dml_dados_teste.sql
-```
-
-### 4. Configure a ConnectionFactory
-
-Edite o arquivo `ConnectionFactory.java` com suas credenciais:
+Edite o arquivo `Config/ConnectionFactory.java` com suas credenciais:
 
 ```java
 private static final String URL = "jdbc:postgresql://localhost:5432/clinicaveterinaria";
@@ -235,7 +248,7 @@ private static final String USER = "seu_usuario";
 private static final String PASSWORD = "sua_senha";
 ```
 
-### 5. Adicione o Driver JDBC ao projeto
+### 4. Adicione o Driver JDBC ao projeto
 
 #### No IntelliJ IDEA:
 1. `File` → `Project Structure` → `Modules`
@@ -250,14 +263,14 @@ private static final String PASSWORD = "sua_senha";
 3. Selecione o arquivo `postgresql-42.7.8.jar`
 4. `Apply and Close`
 
-### 6. Compile e Execute
+### 5. Compile e Execute
 
 ```bash
-# Via linha de comando
-javac -cp .:postgresql-42.7.8.jar *.java
-java -cp .:postgresql-42.7.8.jar SistemaPetCare
+# Via linha de comando (na pasta raiz do projeto)
+javac -cp .:lib/postgresql-42.7.8.jar -d bin src/**/*.java
+java -cp bin:lib/postgresql-42.7.8.jar ClinicaVeterinaria
 
-# Ou execute pela IDE
+# Ou execute pela IDE (botão Run)
 ```
 
 ---
@@ -269,6 +282,8 @@ java -cp .:postgresql-42.7.8.jar SistemaPetCare
 Ao executar o sistema, você verá o seguinte menu:
 
 ```
+=== Sistema - Clínica Veterinária ===
+
 ===== MENU PRINCIPAL =====
 CADASTROS:
 1 - Cadastrar Proprietário
@@ -285,17 +300,21 @@ CONSULTAS:
 ATUALIZAÇÕES:
 9 - Atualizar Proprietário
 10 - Atualizar Veterinário
+11 - Atualizar Animal
+12 - Atualizar Consulta
 
 EXCLUSÕES:
-11 - Deletar Animal
-12 - Deletar Veterinário
+13 - Deletar Animal
+14 - Deletar Veterinário
+15 - Deletar Proprietário
+16 - Deletar Consulta
 
 0 - Sair
 ```
 
 ### Exemplo de Uso
 
-#### 1. Cadastrar um Proprietário
+#### 1. Cadastrar um Proprietário (com validação)
 
 ```
 Escolha uma opção: 1
@@ -310,7 +329,12 @@ Email: joao.silva@email.com
 ✓ Proprietário inserido com sucesso!
 ```
 
-#### 2. Cadastrar um Animal
+**Validações aplicadas:**
+- CPF deve ter exatamente 11 dígitos
+- CPF não pode estar duplicado
+- Nome não pode ser vazio
+
+#### 2. Cadastrar um Animal (com verificação de FK)
 
 ```
 Escolha uma opção: 2
@@ -325,6 +349,12 @@ CPF do proprietário: 12345678901
 
 ✓ Animal inserido com sucesso! ID: 1
 ```
+
+**Validações aplicadas:**
+- Nome não pode ser vazio
+- Peso deve ser maior que zero
+- Proprietário deve existir no banco
+- Data deve estar no formato correto
 
 #### 3. Gerar Relatório de Consulta
 
@@ -356,19 +386,19 @@ Valor: R$ 150.00
 ## 📁 Estrutura do Projeto
 
 ```
-sistema-petcare/
+sistema-clinica-veterinaria/
 │
 ├── src/
-│   ├── config/
+│   ├── Config/
 │   │   └── ConnectionFactory.java   # Gerenciamento de conexões
 │   │
-│   ├── models/
+│   ├── Models/
 │   │   ├── Proprietario.java        # Entidade Proprietário
 │   │   ├── Animal.java              # Entidade Animal
 │   │   ├── Veterinario.java         # Entidade Veterinário
 │   │   └── Consulta.java            # Entidade Consulta
 │   │
-│   ├── dao/
+│   ├── DAO/
 │   │   ├── ProprietarioDAO.java     # CRUD Proprietário
 │   │   ├── AnimalDAO.java           # CRUD Animal
 │   │   ├── VeterinarioDAO.java      # CRUD Veterinário
@@ -390,13 +420,29 @@ sistema-petcare/
 
 ### Tela do Menu
 ```
-=== SISTEMA DE GESTÃO - CLÍNICA VETERINÁRIA PETCARE ===
+=== Sistema - Clínica Veterinária ===
 
 ===== MENU PRINCIPAL =====
 CADASTROS:
 1 - Cadastrar Proprietário
 2 - Cadastrar Animal
 ...
+```
+
+### Exemplo de Validação
+
+```
+=== CADASTRO DE PROPRIETÁRIO ===
+CPF (11 dígitos): 123
+CPF inválido! Deve conter exatamente 11 dígitos.
+```
+
+### Exemplo de Confirmação de Exclusão
+
+```
+CPF do proprietário: 12345678901
+⚠ Tem certeza? Isso deletará todos os animais dele! (S/N): S
+✓ Proprietário deletado com sucesso!
 ```
 
 ### Verificação no Banco de Dados
@@ -424,23 +470,38 @@ ORDER BY p.nome;
 ## ✅ Boas Práticas Implementadas
 
 ### 🔒 Segurança
-- **PreparedStatement**: Previne SQL Injection
-- **Validação de entrada**: Tratamento de exceções
+- **PreparedStatement**: Previne SQL Injection em todas as queries
+- **Validação de entrada**: Tratamento robusto de dados do usuário
+- **Verificação de FK**: Garante integridade antes de inserções
 
 ### 🧹 Código Limpo
-- **Padrão DAO**: Separação de responsabilidades
+- **Padrão DAO**: Separação clara de responsabilidades
 - **Try-with-resources**: Gerenciamento automático de recursos
-- **Métodos pequenos e focados**: Facilita manutenção
+- **Métodos pequenos e focados**: Facilita manutenção e testes
+- **Nomenclatura descritiva**: Código auto-explicativo
 
 ### 🗄️ Banco de Dados
-- **Normalização 3FN**: Elimina redundância
+- **Normalização 3FN**: Elimina redundância de dados
 - **Integridade referencial**: Foreign Keys com CASCADE e RESTRICT
-- **Índices**: Otimização de consultas
+- **Índices**: Otimização de consultas frequentes
+- **Transações implícitas**: Consistência dos dados
+
+### 🎯 Validações
+- **CPF**: 11 dígitos numéricos e unicidade
+- **CRMV**: Unicidade garantida
+- **Datas**: Formato e validação de entrada
+- **Valores numéricos**: Verificação de ranges válidos
+- **FKs**: Existência de registros relacionados
+
+### 💬 UX (User Experience)
+- **Confirmações**: Antes de operações destrutivas
+- **Mensagens claras**: Erros específicos e informativos
+- **Contadores**: Totalizadores em listagens
+- **Opção de manter**: Updates parciais permitidos
 
 ### 📚 Documentação
-- Código comentado
-- Nomenclatura clara e descritiva
-- README completo
+- Código comentado adequadamente
+- README completo e detalhado
 
 ---
 
@@ -478,42 +539,42 @@ ORDER BY p.nome;
 **Solução**: Certifique-se de que o driver JDBC está no classpath do projeto.
 
 ### Erro: "Connection refused"
-**Solução**: Verifique se o PostgreSQL está rodando e se as credenciais estão corretas.
+**Solução**: 
+1. Verifique se o PostgreSQL está rodando
+2. Confirme as credenciais no ConnectionFactory
+3. Teste a conexão com `psql -U postgres`
 
 ### Erro: "Violates foreign key constraint"
-**Solução**: Você está tentando deletar um registro que tem dependentes. Delete os dependentes primeiro ou use CASCADE.
+**Solução**: 
+- Você está tentando deletar um registro que tem dependentes
+- Delete os dependentes primeiro ou use CASCADE
+- Exemplo: Não pode deletar animal que tem consultas
 
 ### Erro: "NumberFormatException"
-**Solução**: Você digitou texto onde era esperado um número. Digite apenas números nos campos numéricos.
+**Solução**: Digite apenas números nos campos numéricos (CPF, ID, peso, valor)
 
----
+### Erro: "DateTimeParseException"
+**Solução**: Use o formato exato solicitado:
+- Data: `AAAA-MM-DD` (ex: 2024-11-20)
+- Data/Hora: `AAAA-MM-DDTHH:MM` (ex: 2024-11-20T14:30)
 
-## 🚀 Melhorias Futuras
+### Erro: "❌ CPF já cadastrado!"
+**Solução**: Este CPF já existe no banco. Use outro CPF ou atualize o registro existente.
 
-- [ ] Interface gráfica (JavaFX ou Swing)
-- [ ] Sistema de autenticação
-- [ ] Relatórios em PDF
-- [ ] Agendamento de consultas
-- [ ] Controle de estoque de medicamentos
-- [ ] Sistema de notificações (vacinas, retornos)
-- [ ] Histórico completo do animal
-- [ ] Exportação de dados (CSV, Excel)
+### Erro: "❌ Proprietário não encontrado!"
+**Solução**: Cadastre o proprietário antes de cadastrar o animal.
+
+### Caracteres estranhos no menu (�, Ã, etc)
+**Solução**: 
+1. Salve o arquivo como UTF-8
+2. No IntelliJ: `File` → `Settings` → `Editor` → `File Encodings` → UTF-8
+3. Recompile o projeto
 
 ---
 
 ## 📝 Licença
 
 Este projeto foi desenvolvido para fins **acadêmicos** como parte da disciplina de Banco de Dados I.
-
----
-
-
-## 🙏 Agradecimentos
-
-- Professor **Fernando Borges** pela orientação
-- Universidade Católica do Salvador
-- Comunidade PostgreSQL
-- Documentação oficial do Java
 
 ---
 
@@ -530,6 +591,11 @@ Este projeto foi desenvolvido para fins **acadêmicos** como parte da disciplina
 
 **⭐ Se este projeto te ajudou, deixe uma estrela! ⭐**
 
-Feito com ❤️ e ☕ por Luiza
+[![Made with ❤️](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F-red.svg)](https://github.com/seu-usuario)
+[![UCSAL](https://img.shields.io/badge/UCSAL-2024.2-blue.svg)](https://www.ucsal.br)
+
+---
+
+**Sistema de Clínica Veterinária** | Banco de Dados I | 2025
 
 </div>
