@@ -190,8 +190,20 @@ public class ClinicaVeterinaria {
         System.out.println("\n--- CADASTRO DE CONSULTA ---");
         System.out.print("ID do animal: ");
         int idAnimal = Integer.parseInt(scanner.nextLine());
+
+        Animal animal = animalDAO.buscarPorId(idAnimal);
+        if (animal == null) {
+            System.out.println("Animal não cadastrado!");
+            return;
+        }
         System.out.print("CRMV do veterinário: ");
         String crmv = scanner.nextLine();
+
+        Veterinario vet = vetDAO.buscarPorCrmv(crmv);
+        if (vet == null) {
+            System.out.println("Veterinário não cadastrado!");
+            return;
+        }
         System.out.print("Data e hora (AAAA-MM-DDTHH:MM): ");
         LocalDateTime dataHora = LocalDateTime.parse(scanner.nextLine());
         System.out.print("Diagnóstico: ");
