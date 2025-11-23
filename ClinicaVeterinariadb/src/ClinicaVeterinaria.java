@@ -131,7 +131,7 @@ public class ClinicaVeterinaria {
         }
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
-        System.out.print("Telefone: ");
+        System.out.print("Telefone: (15 digitos)");
         String telefone = scanner.nextLine();
         System.out.print("Endereço: ");
         String endereco = scanner.nextLine();
@@ -173,7 +173,7 @@ public class ClinicaVeterinaria {
         String nome = scanner.nextLine();
         System.out.print("Especialidade: ");
         String especialidade = scanner.nextLine();
-        System.out.print("Telefone: ");
+        System.out.print("Telefone: (15 digitos)");
         String telefone = scanner.nextLine();
 
         Veterinario vet = new Veterinario(crmv, nome, especialidade, telefone);
@@ -210,7 +210,7 @@ public class ClinicaVeterinaria {
     }
 
     private static void listarAnimaisPorProprietario() throws Exception {
-        System.out.print("CPF do proprietário: ");
+        System.out.print("CPF do proprietário: (11 digitos)");
         String cpf = scanner.nextLine();
 
         System.out.println("\n=== ANIMAIS DO PROPRIETÁRIO ===");
@@ -253,7 +253,7 @@ public class ClinicaVeterinaria {
         }
 
         System.out.println("Dados atuais: " + prop);
-        System.out.print("Novo telefone: ");
+        System.out.print("Novo telefone: (15 digitos)");
         prop.setTelefone(scanner.nextLine());
         System.out.print("Novo endereço: ");
         prop.setEndereco(scanner.nextLine());
@@ -279,7 +279,7 @@ public class ClinicaVeterinaria {
         System.out.println("Dados atuais: " + vet);
         System.out.print("Nova especialidade: ");
         vet.setEspecialidade(scanner.nextLine());
-        System.out.print("Novo telefone: ");
+        System.out.print("Novo telefone: 15 digitos");
         vet.setTelefone(scanner.nextLine());
 
         vetDAO.atualizar(vet);
@@ -364,3 +364,4 @@ public class ClinicaVeterinaria {
         consultaDAO.deletar(id);
     }
 }
+
