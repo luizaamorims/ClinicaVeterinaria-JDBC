@@ -157,6 +157,12 @@ public class ClinicaVeterinaria {
         System.out.print("CPF do proprietário: ");
         String cpfProp = scanner.nextLine();
 
+        Proprietario prop = propDAO.buscarPorCpf(cpfProp);
+        if (prop == null) {
+            System.out.println("Proprietario não cadastrado!");
+            return;
+        }
+
         Animal animal = new Animal(nome, especie, raca, dataNasc, peso, cpfProp);
         animalDAO.inserir(animal);
     }
@@ -349,12 +355,20 @@ public class ClinicaVeterinaria {
     private static void deletarVeterinario() throws Exception {
         System.out.print("CRMV do veterinário: (10 digitos)");
         String crmv = scanner.nextLine();
+        if (crmv.length() != 10) {
+            System.out.println("CRMV inválido! Deve conter 10 dígitos.");
+            return;
+        }
         vetDAO.deletar(crmv);
     }
 
     private static void deletarProprietario() throws Exception {
         System.out.println("CPF do proprietario: (11 digitos) ");
         String cpf = scanner.nextLine();
+        if (cpf.length() != 11) {
+            System.out.println("CPF inválido! Deve conter 11 dígitos.");
+            return;
+        }
         propDAO.deletar(cpf);
     }
 
