@@ -1,6 +1,7 @@
 package Models;
 
 public class Proprietario {
+
     private String cpf;
     private String nome;
     private String telefone;

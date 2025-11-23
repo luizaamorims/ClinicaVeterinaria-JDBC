@@ -60,6 +60,26 @@ public class ConsultaDAO {
         return lista;
     }
 
+    public Consulta buscarPorId(int idConsulta) throws SQLException {
+        String sql = "SELECT * FROM Consulta WHERE id_consulta = ?";
+        try (Connection conn = FabricaConexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idConsulta);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Consulta consulta = new Consulta();
+                consulta.setIdConsulta(rs.getInt("id_consulta"));
+                consulta.setDataHora(rs.getTimestamp("data_hora").toLocalDateTime());
+                consulta.setIdAnimal(rs.getInt("id_animal"));
+                consulta.setCrmvVeterinario(rs.getString("crmv_veterinario"));
+                consulta.setDiagnostico(rs.getString("diagnostico"));
+                consulta.setValor(rs.getDouble("valor"));
+                return consulta;
+            }
+        }
+        return null;
+    }
+
 
     public void gerarRelatorioConsulta(int idConsulta) throws SQLException {
         String sql = "SELECT c.id_consulta, c.data_hora, c.diagnostico, c.valor, " +

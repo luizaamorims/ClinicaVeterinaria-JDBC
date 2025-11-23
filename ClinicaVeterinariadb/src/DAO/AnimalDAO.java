@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnimalDAO {
+
     public int inserir(Animal animal) throws SQLException {
         String sql = "INSERT INTO Animal (nome, especie, raca, data_nascimento, peso, cpf_proprietario) " +
                 "VALUES (?, ?, ?, ?, ?, ?) RETURNING id_animal";

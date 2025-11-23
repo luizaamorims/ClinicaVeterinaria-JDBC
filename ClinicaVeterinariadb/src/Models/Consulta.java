@@ -3,6 +3,7 @@ package Models;
 import java.time.LocalDateTime;
 
 public class Consulta {
+
     private int idConsulta;
     private LocalDateTime dataHora;
     private int idAnimal;

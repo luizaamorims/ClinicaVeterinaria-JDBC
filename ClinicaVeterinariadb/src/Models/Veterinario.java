@@ -1,6 +1,7 @@
 package Models;
 
 public class Veterinario {
+
     private String crmv;
     private String nome;
     private String especialidade;

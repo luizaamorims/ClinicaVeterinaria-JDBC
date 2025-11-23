@@ -3,6 +3,7 @@ package Models;
 import java.time.LocalDate;
 
 public class Animal {
+
     private int idAnimal;
     private String nome;
     private String especie;

@@ -10,7 +10,6 @@ import java.util.List;
 
 public class VeterinarioDAO {
 
-
     public void inserir(Veterinario vet) throws SQLException {
         String sql = "INSERT INTO Veterinario (crmv, nome, especialidade, telefone) VALUES (?, ?, ?, ?)";
 

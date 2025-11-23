@@ -63,10 +63,22 @@ public class ClinicaVeterinaria {
                         atualizarVeterinario();
                         break;
                     case 11:
-                        deletarAnimal();
+                        atualizarAnimal();
                         break;
                     case 12:
+                        atualizarConsulta();
+                        break;
+                    case 13:
+                        deletarAnimal();
+                        break;
+                    case 14:
                         deletarVeterinario();
+                        break;
+                    case 15:
+                        deletarProprietario();
+                        break;
+                    case 16:
+                        deletarConsulta();
                         break;
                     case 0:
                         System.out.println("Encerrando sistema...");
@@ -98,9 +110,13 @@ public class ClinicaVeterinaria {
         System.out.println("\nATUALIZAÇÕES:");
         System.out.println("9 - Atualizar Proprietário");
         System.out.println("10 - Atualizar Veterinário");
+        System.out.println("11 - Atualizar Animal");
+        System.out.println("12 - Atualizar Consulta");
         System.out.println("\nEXCLUSÕES:");
-        System.out.println("11 - Deletar Animal");
-        System.out.println("12 - Deletar Veterinário");
+        System.out.println("13 - Deletar Animal");
+        System.out.println("14 - Deletar Veterinário");
+        System.out.println("15 - Deletar Proprietario");
+        System.out.println("16 - Deletar Consulta");
         System.out.println("\n0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -143,7 +159,7 @@ public class ClinicaVeterinaria {
 
     private static void cadastrarVeterinario() throws Exception {
         System.out.println("\n--- CADASTRO DE VETERINÁRIO ---");
-        System.out.print("CRMV: ");
+        System.out.print("CRMV: (10 digitos) ");
         String crmv = scanner.nextLine();
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
@@ -219,7 +235,7 @@ public class ClinicaVeterinaria {
     }
 
     private static void atualizarProprietario() throws Exception {
-        System.out.print("CPF do proprietário: ");
+        System.out.print("CPF do proprietário: (11 digitos)");
         String cpf = scanner.nextLine();
 
         Proprietario prop = propDAO.buscarPorCpf(cpf);
@@ -238,7 +254,7 @@ public class ClinicaVeterinaria {
     }
 
     private static void atualizarVeterinario() throws Exception {
-        System.out.print("CRMV do veterinário: ");
+        System.out.print("CRMV do veterinário: (10 digitos) ");
         String crmv = scanner.nextLine();
 
         Veterinario vet = vetDAO.buscarPorCrmv(crmv);
@@ -256,6 +272,61 @@ public class ClinicaVeterinaria {
         vetDAO.atualizar(vet);
     }
 
+    private static void atualizarAnimal() throws Exception {
+        System.out.print("ID do animal: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Animal animal = animalDAO.buscarPorId(id);
+
+        if (animal == null) {
+            System.out.println("Animal não encontrado!");
+            return;
+        }
+
+        System.out.println("Dados atuais: " + animal);
+        System.out.print("Novo nome (enter para manter): ");
+        String novoNome = scanner.nextLine();
+        if (!novoNome.isBlank()) animal.setNome(novoNome);
+
+        System.out.print("Nova espécie (enter para manter): ");
+        String novaEspecie = scanner.nextLine();
+        if (!novaEspecie.isBlank()) animal.setEspecie(novaEspecie);
+
+        System.out.print("Nova raça (enter para manter): ");
+        String novaRaca = scanner.nextLine();
+        if (!novaRaca.isBlank()) animal.setRaca(novaRaca);
+
+        System.out.print("Nova data de nascimento (AAAA-MM-DD) (enter para manter): ");
+        String data = scanner.nextLine();
+        if (!data.isBlank()) animal.setDataNascimento(LocalDate.parse(data));
+
+        System.out.print("Novo peso (kg) (enter para manter): ");
+        String pesoStr = scanner.nextLine();
+        if (!pesoStr.isBlank()) animal.setPeso(Double.parseDouble(pesoStr));
+
+        animalDAO.atualizar(animal);
+    }
+
+    private static void atualizarConsulta() throws Exception {
+        System.out.print("ID da consulta: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Consulta consulta = consultaDAO.buscarPorId(id);
+        if (consulta == null) {
+            System.out.println("Consulta não encontrada!");
+            return;
+        }
+
+        System.out.println("Dados atuais: " + consulta);
+        System.out.print("Novo diagnóstico (enter para manter): ");
+        String novoDiag = scanner.nextLine();
+        if (!novoDiag.isBlank()) consulta.setDiagnostico(novoDiag);
+
+        System.out.print("Novo valor (R$) (enter para manter): ");
+        String valorStr = scanner.nextLine();
+        if (!valorStr.isBlank()) consulta.setValor(Double.parseDouble(valorStr));
+
+        consultaDAO.atualizar(consulta);
+    }
+
     private static void deletarAnimal() throws Exception {
         System.out.print("ID do animal: ");
         int id = Integer.parseInt(scanner.nextLine());
@@ -266,5 +337,17 @@ public class ClinicaVeterinaria {
         System.out.print("CRMV do veterinário: ");
         String crmv = scanner.nextLine();
         vetDAO.deletar(crmv);
+    }
+
+    private static void deletarProprietario() throws Exception {
+        System.out.println("CPF do proprietario: (11 digitos) ");
+        String cpf = scanner.nextLine();
+        propDAO.deletar(cpf);
+    }
+
+    private static void deletarConsulta() throws Exception {
+        System.out.print("ID da consulta: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        consultaDAO.deletar(id);
     }
 }
