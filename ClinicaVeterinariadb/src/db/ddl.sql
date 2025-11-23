@@ -1,8 +1,6 @@
-DROP
-DATABASE IF EXISTS clinicaveterinariadb;
+DROP DATABASE IF EXISTS clinicaveterinariadb;
 
-CREATE
-DATABASE clinicaveterinariadb;
+CREATE DATABASE clinicaveterinariadb;
 
 
 DROP TABLE IF EXISTS Consulta;
