@@ -125,6 +125,10 @@ public class ClinicaVeterinaria {
         System.out.println("\n--- CADASTRO DE PROPRIETÁRIO ---");
         System.out.print("CPF (11 dígitos): ");
         String cpf = scanner.nextLine();
+        if (cpf.length() != 11) {
+            System.out.println("CPF inválido! Deve conter 11 dígitos.");
+            return;
+        }
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
         System.out.print("Telefone: ");
@@ -161,6 +165,10 @@ public class ClinicaVeterinaria {
         System.out.println("\n--- CADASTRO DE VETERINÁRIO ---");
         System.out.print("CRMV: (10 digitos) ");
         String crmv = scanner.nextLine();
+        if (crmv.length() != 10) {
+            System.out.println("CRMV inválido! Deve conter 10 dígitos.");
+            return;
+        }
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
         System.out.print("Especialidade: ");
@@ -257,6 +265,11 @@ public class ClinicaVeterinaria {
         System.out.print("CRMV do veterinário: (10 digitos) ");
         String crmv = scanner.nextLine();
 
+        if (crmv.length() != 10) {
+            System.out.println("CRMV inválido! Deve conter 10 dígitos.");
+            return;
+        }
+
         Veterinario vet = vetDAO.buscarPorCrmv(crmv);
         if (vet == null) {
             System.out.println("Veterinário não encontrado!");
@@ -334,7 +347,7 @@ public class ClinicaVeterinaria {
     }
 
     private static void deletarVeterinario() throws Exception {
-        System.out.print("CRMV do veterinário: ");
+        System.out.print("CRMV do veterinário: (10 digitos)");
         String crmv = scanner.nextLine();
         vetDAO.deletar(crmv);
     }
